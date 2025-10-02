@@ -5,7 +5,7 @@ using Reception.Application.Models;
 namespace Reception.Presentation.Http.Controllers;
 
 [ApiController]
-[Route("api/v1/patient")]
+[Route("api/v1/patients")]
 public class PatientController
 {
     private readonly IPatientService _patientService;
@@ -22,7 +22,13 @@ public class PatientController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetPatient(long id)
+    public IAsyncEnumerable<Patient> GetPatients()
+    {
+        return _patientService.GetAllPatients();
+    }
+
+    [HttpGet("{id:long}")]
+    public async Task<IActionResult> GetPatient([FromRoute] long id)
     {
         try
         {
@@ -33,7 +39,12 @@ public class PatientController
         {
             return new NotFoundResult();
         }
-        
+    }
+
+    [HttpGet("by-request")]
+    public IAsyncEnumerable<Patient> GetPatientBySearchRequest([FromQuery] SearchPatientRequest request)
+    {
+        return _patientService.GetPatientBySearchRequest(request);
     }
 
     [HttpDelete]

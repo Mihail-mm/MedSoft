@@ -1,3 +1,3 @@
 namespace Reception.Application.Models;
 
-public record Patient(long Id, string Name, string Surname, DateTime BirthDate);
+public record Patient(long Id, string Name, string Surname, DateOnly BirthDate);

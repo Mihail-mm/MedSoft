@@ -1,4 +1,4 @@
-using System.Globalization;
+using System.Data.Common;
 using Npgsql;
 using Reception.Application.Abstraction;
 using Reception.Application.Models;
@@ -31,14 +31,37 @@ public class PatientRepository : IPatientRepository
         await command.ExecuteNonQueryAsync();
     }
 
-    public async Task<Patient> GetPatientById(long id)
+    public async IAsyncEnumerable<Patient> GetAllPatients()
     {
         const string sql = """
-                                  SELECT * FROM Patient WHERE id = @id;
+                           select *
+                           from patient
                            """;
+
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync();
+
+        await using var command = new NpgsqlCommand(sql, connection);
+
+        await using DbDataReader reader = await command.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            yield return new Patient(
+                Id: reader.GetInt64(0),
+                Name: reader.GetString(1),
+                Surname: reader.GetString(2),
+                BirthDate: DateOnly.FromDateTime(reader.GetDateTime(3)));
+        }
+    }
+
+    public async Task<Patient> GetPatientById(long id)
+    {
+        const string sql = """ SELECT * FROM Patient WHERE id = @id; """;
+
         await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync();
         await using var command = new NpgsqlCommand(sql, connection);
         command.Parameters.Add(new NpgsqlParameter("@id", id));
+
         await using var reader = await command.ExecuteReaderAsync();
         if (await reader.ReadAsync())
         {
@@ -46,18 +69,44 @@ public class PatientRepository : IPatientRepository
                 Id: reader.GetInt64(0),
                 Name: reader.GetString(1),
                 Surname: reader.GetString(2),
-                BirthDate: reader.GetDateTime(3));
+                BirthDate: DateOnly.FromDateTime(reader.GetDateTime(3)));
         }
 
         throw new Exception($"Patient with id {id} not found");
     }
 
+    public async IAsyncEnumerable<Patient> GetPatientBySearchRequest(SearchPatientRequest request)
+    {
+        const string sql = """
+                            SELECT *
+                            FROM Patient
+                            WHERE name = @name AND surname = @surname;
+                           """;
+
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync();
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.Add(new NpgsqlParameter("@name", request.Name));
+        command.Parameters.Add(new NpgsqlParameter("@surname", request.Surname));
+
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            yield return new Patient(
+                Id: reader.GetInt64(0),
+                Name: reader.GetString(1),
+                Surname: reader.GetString(2),
+                BirthDate: DateOnly.FromDateTime(reader.GetDateTime(3)));
+        }
+    }
+
     public async Task DeletePatientById(long id)
     {
-        const string sql = "DELETE FROM Patient WHERE id = @id;";
+        const string sql = """ DELETE FROM Patient WHERE id = @id; """;
+
         await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync();
         await using var command = new NpgsqlCommand(sql, connection);
         command.Parameters.Add(new NpgsqlParameter("@id", id));
+
         await command.ExecuteNonQueryAsync();
     }
 }

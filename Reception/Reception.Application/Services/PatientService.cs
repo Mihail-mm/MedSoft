@@ -13,6 +13,11 @@ public class PatientService : IPatientService
         _patientRepository = patientRepository;
     }
 
+    public IAsyncEnumerable<Patient> GetAllPatients()
+    {
+        return _patientRepository.GetAllPatients();
+    }
+
     public async Task AddPatient(AddPatientRequest request)
     {
         await _patientRepository.AddPatient(request);
@@ -21,6 +26,11 @@ public class PatientService : IPatientService
     public async Task<Patient> GetPatientById(long id)
     {
         return await _patientRepository.GetPatientById(id);
+    }
+
+    public IAsyncEnumerable<Patient> GetPatientBySearchRequest(SearchPatientRequest request)
+    {
+        return _patientRepository.GetPatientBySearchRequest(request);
     }
 
     public async Task DeletePatientById(long id)
