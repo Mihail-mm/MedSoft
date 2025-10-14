@@ -4,19 +4,19 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Reception.Application.Abstraction\Reception.Application.Abstraction.csproj" />
+      <PackageReference Include="FluentMigrator" Version="7.1.0" />
+      <PackageReference Include="FluentMigrator.Abstractions" Version="7.1.0" />
+      <PackageReference Include="FluentMigrator.Runner" Version="7.1.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
+      <PackageReference Include="Npgsql" Version="9.0.3" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="FluentMigrator" Version="7.1.0" />
-      <PackageReference Include="FluentMigrator.Runner" Version="7.1.0" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
-      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.9" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-      <PackageReference Include="Npgsql" Version="9.0.3" />
+      <ProjectReference Include="..\HIS.Application.Abstractions\HIS.Application.Abstractions.csproj" />
     </ItemGroup>
 
 </Project>
