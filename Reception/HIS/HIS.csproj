@@ -13,9 +13,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Reception.Application\Reception.Application.csproj" />
-      <ProjectReference Include="..\Reception.Infrastructure\Reception.Infrastructure.csproj" />
-      <ProjectReference Include="..\Reception.Presentation.Http\Reception.Presentation.Http.csproj" />
+        <ProjectReference Include="..\HIS.Application\HIS.Application.csproj" />
+        <ProjectReference Include="..\HIS.Infrastructure\HIS.Infrastructure.csproj" />
+        <ProjectReference Include="..\HIS.Presentation.HTTP\HIS.Presentation.HTTP.csproj" />
+        
     </ItemGroup>
 
 </Project>
