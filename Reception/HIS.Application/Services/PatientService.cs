@@ -13,8 +13,18 @@ public class PatientService : IPatientService
         _patientRepository = patientRepository;
     }
 
+    public async Task AddPatient(Patient patient)
+    {
+        await _patientRepository.AddPatient(patient);
+    }
+
     public IAsyncEnumerable<Patient> GetAll()
     {
         return _patientRepository.GetAll();
+    }
+
+    public async Task DeletePatient(long patientId)
+    {
+        await _patientRepository.DeletePatient(patientId);
     }
 }

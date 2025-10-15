@@ -8,7 +8,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddHisApplication(this IServiceCollection services)
     {
-        services.AddScoped<IPatientService, PatientService>();
+        services.AddSingleton<IPatientService, PatientService>();
+        services.AddHostedService<Hl7BackgroundService>();
         return services;
     }
 }

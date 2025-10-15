@@ -14,6 +14,24 @@ public class PatientRepository : IPatientRepository
         _dataSource = npgsqlDataSource;
     }
 
+    public async Task AddPatient(Patient patient)
+    {
+        const string sql = """
+                           INSERT INTO patients(id, name, surname, birthday)
+                           VALUES (@id, @name, @surname, @birthday)
+                           """;
+        
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync();
+
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@id", patient.Id);
+        command.Parameters.Add(new NpgsqlParameter("@name", patient.Name));
+        command.Parameters.Add(new NpgsqlParameter("@surname", patient.Surname));
+        command.Parameters.Add(new NpgsqlParameter("@birthday", patient.BirthDate));
+
+        await command.ExecuteNonQueryAsync();
+    }
+
     public async IAsyncEnumerable<Patient> GetAll()
     {
         const string sql = """
@@ -35,5 +53,16 @@ public class PatientRepository : IPatientRepository
                 Surname: reader.GetString(2),
                 BirthDate: DateOnly.FromDateTime(reader.GetDateTime(3)));
         }
+    }
+
+    public async Task DeletePatient(long patientId)
+    {
+        const string sql = """ DELETE FROM Patients WHERE id = @id; """;
+
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync();
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.Add(new NpgsqlParameter("@id", patientId));
+
+        await command.ExecuteNonQueryAsync();
     }
 }

@@ -14,11 +14,12 @@ public class PatientRepository : IPatientRepository
         _dataSource = npgsqlDataSource;
     }
 
-    public async Task AddPatient(AddPatientRequest request)
+    public async Task<long> AddPatient(AddPatientRequest request)
     {
         const string sql = """
                                INSERT INTO Patient(name, surname, birthday)
                                VALUES (@name, @surname, @birthday)
+                               returning id;
                            """;
 
         await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync();
@@ -28,7 +29,10 @@ public class PatientRepository : IPatientRepository
         command.Parameters.Add(new NpgsqlParameter("@surname", request.Surname));
         command.Parameters.Add(new NpgsqlParameter("@birthday", request.DateOfBirth));
 
-        await command.ExecuteNonQueryAsync();
+        await using DbDataReader reader = await command.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync()) return reader.GetInt64(0);
+        throw new InvalidOperationException();
     }
 
     public async IAsyncEnumerable<Patient> GetAllPatients()

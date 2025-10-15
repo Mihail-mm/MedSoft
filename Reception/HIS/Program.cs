@@ -21,6 +21,8 @@ builder.Services
 
 builder.Services.AddSwaggerGen().AddEndpointsApiExplorer();
 
+builder.Configuration.AddJsonFile($"appsettings.json", true, true);
+
 WebApplication app = builder.Build();
 
 app.UseRouting();
