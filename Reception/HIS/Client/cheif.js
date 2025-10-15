@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:5105/api/v1';
+const API_BASE = 'http://localhost:5001/api/v1';
 
 function showMessage(text, isError = false) {
     const messageDiv = document.getElementById('message');
