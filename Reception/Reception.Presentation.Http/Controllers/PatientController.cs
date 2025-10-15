@@ -47,7 +47,7 @@ public class PatientController
         return _patientService.GetPatientBySearchRequest(request);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     public async Task DeletePatient(long id)
     {
         await _patientService.DeletePatientById(id);
