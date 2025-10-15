@@ -4,7 +4,7 @@ namespace Reception.Application.Abstraction;
 
 public interface IPatientRepository
 {
-    Task AddPatient(AddPatientRequest request);
+    Task<long> AddPatient(AddPatientRequest request);
 
     IAsyncEnumerable<Patient> GetAllPatients();
 

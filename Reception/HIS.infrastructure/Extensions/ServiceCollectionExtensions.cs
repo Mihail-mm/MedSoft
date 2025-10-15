@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
                 .ScanIn(typeof(ServiceCollectionExtensions).Assembly).For.Migrations())
             .AddLogging(lb => lb.AddFluentMigratorConsole());
 
-        serviceCollection.AddScoped<IPatientRepository, PatientRepository>();
+        serviceCollection.AddSingleton<IPatientRepository, PatientRepository>();
 
         return serviceCollection;
     }
