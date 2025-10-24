@@ -46,4 +46,9 @@ public class PatientService : IPatientService
         await _hl7ClientService.SendHl7Message(hl7Message);
         await _patientRepository.DeletePatientById(id);
     }
+
+    public async Task PatchStatus(long id)
+    {
+        await _patientRepository.PatchPatientStatus(id, PatientStatus.Arrived);
+    }
 }

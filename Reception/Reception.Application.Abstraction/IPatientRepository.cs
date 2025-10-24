@@ -13,4 +13,6 @@ public interface IPatientRepository
     IAsyncEnumerable<Patient> GetPatientBySearchRequest(SearchPatientRequest request);
 
     Task DeletePatientById(long id);
+
+    Task PatchPatientStatus(long id, PatientStatus status);
 }

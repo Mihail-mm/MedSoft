@@ -53,4 +53,10 @@ public class PatientController
     {
         await _patientService.DeletePatientById(id);
     }
+
+    [HttpPatch("{id:long}")]
+    public async Task PatchStatus(long id)
+    {
+        await _patientService.PatchStatus(id);
+    }
 }

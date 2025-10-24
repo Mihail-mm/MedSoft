@@ -2,6 +2,7 @@ using FluentMigrator.Runner;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Reception.Application.Abstraction;
+using Reception.Application.Models;
 using Reception.Infrastructure.Background;
 using Reception.Infrastructure.Repositories;
 
@@ -14,6 +15,8 @@ public static class ServiceCollectionExtensions
         var connectionString = "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=postgres;";
 
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+        
+        dataSourceBuilder.MapEnum<PatientStatus>("patient_status");
 
         var dataSource = dataSourceBuilder.Build();
         serviceCollection.AddSingleton(dataSource);
