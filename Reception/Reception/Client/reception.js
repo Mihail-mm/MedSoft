@@ -58,6 +58,19 @@ function displayPatients(patients) {
     `).join('');
 }
 
+function displayFoundPatients(patients) {
+    const container = document.getElementById('found-patient');
+
+    container.innerHTML = patients.map(patient => `
+        <div class="patient-item">
+            <strong>${patient.surname} ${patient.name}</strong><br>
+            Дата рождения: ${new Date(patient.birthDate).toLocaleDateString()}<br>
+            ID: ${patient.id}
+            <button onclick="deletePatient('${patient.id}')" style="background: #dc3545; margin-top: 5px;">Удалить</button>
+        </div>
+    `).join('');
+}
+
 async function deletePatient(patientId) {
     const response = await fetch(`${API_BASE}/patients/${patientId}`, {
         method: 'DELETE'
@@ -65,8 +78,25 @@ async function deletePatient(patientId) {
 
     if (response.ok) {
         await loadPatients();
+        await searchPatients();
     } else {
         showMessage('Ошибка удаления', true);
+    }
+}
+
+async function searchPatients() {
+    const name = document.getElementById('search-name').value;
+    const surname = document.getElementById('search-surname').value;
+    
+    const response = await fetch(`${API_BASE}/patients/${name}/${surname}`, {
+        method: 'GET'
+    });
+
+    if (response.ok) {
+        const patients = await response.json();
+        displayFoundPatients(patients);
+    } else {
+        showMessage('Ошибка загрузки пациентов: ' + response.status, true);
     }
 }
 

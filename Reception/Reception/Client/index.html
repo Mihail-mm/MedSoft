@@ -15,6 +15,7 @@
         .patient-item { padding: 10px; border: 1px solid #ddd; margin-bottom: 10px; border-radius: 4px; }
         .error { color: red; margin-top: 10px; }
         .success { color: green; margin-top: 10px; }
+        .form-patients { margin-top: 20px; border-top: 1px solid #ddd; padding-top: 20px; }
     </style>
 </head>
 <body>
@@ -39,7 +40,27 @@
     <button onclick="addPatient()">Добавить пациента</button>
 
     <div id="message"></div>
+    
+    <div class="form-patients">
+        <h2>Поиск пациентов</h2>
+    </div>
 
+    <div class="form-group">
+        <label for="name">Имя:</label>
+        <input type="text" id="search-name" required>
+    </div>
+
+    <div class="form-group">
+        <label for="surname">Фамилия:</label>
+        <input type="text" id="search-surname" required>
+    </div>
+
+    <button onclick="searchPatients()">Найти пациента</button>
+
+    <div class="form-patients">
+        <div id="found-patient"></div>
+    </div>
+    
     <div class="patient-list">
         <h2>Список пациентов</h2>
         <div id="patients"></div>

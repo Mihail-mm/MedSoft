@@ -41,10 +41,11 @@ public class PatientController
         }
     }
 
-    [HttpGet("by-request")]
-    public IAsyncEnumerable<Patient> GetPatientBySearchRequest([FromQuery] SearchPatientRequest request)
+    [HttpGet("{name}/{surname}")]
+    public IAsyncEnumerable<Patient> GetPatientBySearchRequest([FromRoute] string name, [FromRoute] string surname)
     {
-        return _patientService.GetPatientBySearchRequest(request);
+        var searchRequest = new SearchPatientRequest(name, surname);
+        return _patientService.GetPatientBySearchRequest(searchRequest);
     }
 
     [HttpDelete("{id:long}")]
