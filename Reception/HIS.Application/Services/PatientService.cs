@@ -27,4 +27,9 @@ public class PatientService : IPatientService
     {
         await _patientRepository.DeletePatient(patientId);
     }
+
+    public async Task PatchPatientStatus(long patientId, PatientStatus status)
+    {
+        await _patientRepository.PatchPatientStatus(patientId, status);
+    }
 }

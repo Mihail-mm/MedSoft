@@ -66,4 +66,24 @@ public class PatientRepository : IPatientRepository
 
         await command.ExecuteNonQueryAsync();
     }
+
+    public async Task PatchPatientStatus(long patientId, PatientStatus status)
+    {
+        const string sql = """
+                           UPDATE Patients
+                           SET patient_status = @status
+                           WHERE id = @patientId;
+                           """;
+
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync();
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.Add(new NpgsqlParameter("@patientId", patientId));
+        var statusParam = new NpgsqlParameter("@status", status)
+        {
+            DataTypeName = "patient_status"
+        };
+        command.Parameters.Add(statusParam);
+
+        await command.ExecuteNonQueryAsync();
+    }
 }
