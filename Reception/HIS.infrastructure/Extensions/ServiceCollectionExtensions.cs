@@ -1,5 +1,6 @@
 using FluentMigrator.Runner;
 using HIS.Application.Abstractions;
+using HIS.Application.Models;
 using HIS.infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
@@ -13,6 +14,8 @@ public static class ServiceCollectionExtensions
         var connectionString = "Host=localhost;Port=5430;Database=postgres;Username=postgres;Password=postgres;";
 
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+
+        dataSourceBuilder.MapEnum<PatientStatus>("patient_status");
 
         var dataSource = dataSourceBuilder.Build();
         serviceCollection.AddSingleton(dataSource);

@@ -89,7 +89,8 @@ public class Hl7BackgroundService : BackgroundService
             BirthDate: DateOnly.FromDateTime(DateTime.ParseExact(
                 pid.DateTimeOfBirth.Time.Value,
                 "yyyyMMdd",
-                System.Globalization.CultureInfo.InvariantCulture))
+                System.Globalization.CultureInfo.InvariantCulture)),
+            PatientStatus.NotArrived
         );
 
         await _patientService.AddPatient(patient);

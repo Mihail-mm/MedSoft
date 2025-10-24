@@ -51,7 +51,8 @@ public class PatientRepository : IPatientRepository
                 Id: reader.GetInt64(0),
                 Name: reader.GetString(1),
                 Surname: reader.GetString(2),
-                BirthDate: DateOnly.FromDateTime(reader.GetDateTime(3)));
+                BirthDate: DateOnly.FromDateTime(reader.GetDateTime(3)),
+                Status: reader.GetFieldValue<PatientStatus>(4));
         }
     }
 
