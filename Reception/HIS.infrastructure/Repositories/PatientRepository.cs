@@ -42,6 +42,7 @@ public class PatientRepository : IPatientRepository
 
         await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync();
         await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@id", id);
         await using DbDataReader reader = await command.ExecuteReaderAsync();
 
         if (await reader.ReadAsync())
