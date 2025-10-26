@@ -28,10 +28,10 @@ async function addPatient() {
 
     if (response.ok) {
         await loadPatients();
+        clearForm();
     } else {
         showMessage('Ошибка при добавлении пациента: ' + response.status, true);
     }
-    clearForm();
 }
 
 async function loadPatients() {
@@ -69,7 +69,7 @@ function displayFoundPatients(patients) {
             Дата рождения: ${new Date(patient.birthDate).toLocaleDateString()}<br>
             Статус: ${getStatusText(patient.status)}<br>
             ID: ${patient.id}
-            <button onclick="patchPatientStatus('${patient.id}')" style="background: green; margin-top: 5px;">Изменить статус</button>
+            <button onclick="patchPatientStatus('${patient.id}')" style="background: green; margin-top: 5px;">Пациент пришел</button>
             <button onclick="deletePatient('${patient.id}')" style="background: #dc3545; margin-top: 5px;">Удалить</button>
         </div>
     `).join('');
@@ -80,6 +80,7 @@ async function deletePatient(patientId) {
         method: 'DELETE'
     });
 
+    await clearPatients();
     if (response.ok) {
         await loadPatients();
         await searchPatients();
@@ -92,7 +93,7 @@ async function patchPatientStatus(patientId) {
     const response = await fetch(`${API_BASE}/patients/${patientId}`, {
         method: 'PATCH',
     });
-
+    await clearPatients();
     if (response.ok) {
         await loadPatients();
         await searchPatients();
@@ -135,4 +136,9 @@ function getStatusText(status) {
         3: 'Пациент уже был у врача на приеме'
     };
     return statusMap[status] || `Статус: ${status}`;
+}
+
+function clearPatients() {
+    const container = document.getElementById('found-patient');
+    container.innerHTML = '';
 }

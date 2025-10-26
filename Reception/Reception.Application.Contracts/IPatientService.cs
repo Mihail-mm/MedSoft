@@ -14,5 +14,7 @@ public interface IPatientService
 
     Task DeletePatientById(long id);
 
-    Task PatchStatus(long id);
+    Task PatchStatus(long id, PatientStatus status);
+    
+    Task PatientArrived(long id);
 }

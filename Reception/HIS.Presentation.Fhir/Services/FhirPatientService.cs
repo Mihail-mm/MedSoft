@@ -1,6 +1,7 @@
 using HIS.Application.Contracts;
 using HIS.Application.Models;
 using Hl7.Fhir.Model;
+using Hl7.Fhir.Rest;
 using Hl7.Fhir.Serialization;
 using Task = System.Threading.Tasks.Task;
 using DomainPatient = HIS.Application.Models.Patient;
@@ -12,11 +13,18 @@ public class FhirPatientService : IFhirPatientService
 {
     private readonly IPatientService _patientsService;
     private readonly FhirJsonSerializer _serializer;
+    private readonly FhirClient _fhirClient;
+
+    private static FhirClientSettings Settings = new()
+    {
+        PreferredFormat = ResourceFormat.Json
+    };
 
     public FhirPatientService(IPatientService patientsService)
     {
         _patientsService = patientsService;
         _serializer = new FhirJsonSerializer();
+        _fhirClient = new FhirClient("https://localhost:7066/api/fhir", Settings);
     }
 
     public async Task<string> GetPatients()
@@ -42,6 +50,7 @@ public class FhirPatientService : IFhirPatientService
     {
         var domainPatient = mapFromHl7Patient(patient);
         await _patientsService.PatchPatientStatus(id, domainPatient.Status);
+        await _fhirClient.UpdateAsync(patient);
     }
     
     private static Patient MapFromDomainPatient(DomainPatient patient)

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Reception.Application.Extensions;
 using Reception.Infrastructure.Extensions;
+using Reception.Presentation.Fhir.Extensions;
 using Reception.Presentation.Http.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -46,9 +47,16 @@ builder.Services.AddInfrastructure();
 builder.Services
     .AddControllers()
     .AddNewtonsoftJson()
-    .AddPresentationHttp();
+    .AddPresentationHttp()
+    .AddPresentationFhir();
 
-builder.Services.AddSwaggerGen().AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.CustomSchemaIds(type => 
+    {
+        return type.FullName.Replace(".", "_");
+    });
+}).AddEndpointsApiExplorer();
 
 builder.Configuration.AddJsonFile($"appsettings.json", true, true);
 

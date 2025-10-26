@@ -55,8 +55,8 @@ public class PatientController
     }
 
     [HttpPatch("{id:long}")]
-    public async Task PatchStatus(long id)
+    public async Task PatientArrived(long id)
     {
-        await _patientService.PatchStatus(id);
+        await _patientService.PatientArrived(id);
     }
 }

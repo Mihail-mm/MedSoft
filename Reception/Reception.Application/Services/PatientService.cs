@@ -59,10 +59,15 @@ public class PatientService : IPatientService
         await _patientRepository.DeletePatientById(id);
     }
 
-    public async Task PatchStatus(long id)
+    public async Task PatchStatus(long id, PatientStatus status)
     {
-        await _patientRepository.PatchPatientStatus(id, PatientStatus.Arrived);
-        
+        await _patientRepository.PatchPatientStatus(id, status);
+    }
+
+    public async Task PatientArrived(long id)
+    {
+        await PatchStatus(id, PatientStatus.Arrived);
+
         var patient = await _fhirClient.ReadAsync<FhirPatient>($"Patient/{id}");
 
         var statusExtensionUrl = "http://example.org/fhir/StructureDefinition/patient-status";
