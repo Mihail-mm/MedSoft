@@ -3,6 +3,7 @@ using HIS.Application.Models;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Serialization;
+using Microsoft.Extensions.Logging;
 using Task = System.Threading.Tasks.Task;
 using DomainPatient = HIS.Application.Models.Patient;
 using Patient = Hl7.Fhir.Model.Patient;
@@ -14,17 +15,19 @@ public class FhirPatientService : IFhirPatientService
     private readonly IPatientService _patientsService;
     private readonly FhirJsonSerializer _serializer;
     private readonly FhirClient _fhirClient;
+    private readonly ILogger<FhirPatientService> _logger;
 
     private static FhirClientSettings Settings = new()
     {
         PreferredFormat = ResourceFormat.Json
     };
 
-    public FhirPatientService(IPatientService patientsService)
+    public FhirPatientService(IPatientService patientsService, ILogger<FhirPatientService> logger)
     {
         _patientsService = patientsService;
         _serializer = new FhirJsonSerializer();
         _fhirClient = new FhirClient("https://localhost:7066/api/fhir", Settings);
+        _logger = logger;
     }
 
     public async Task<string> GetPatients()
@@ -37,13 +40,17 @@ public class FhirPatientService : IFhirPatientService
             Entry = patients.Select(p => new Bundle.EntryComponent { Resource = MapFromDomainPatient(p) }).ToList()
         };
         
-        return _serializer.SerializeToString(bundle);
+        var message = _serializer.SerializeToString(bundle);
+        _logger.LogInformation(message);
+        return message;
     }
 
     public async Task<string> GetPatient(long id)
     {
         var patient = await _patientsService.GetPatientById(id);
-        return _serializer.SerializeToString(MapFromDomainPatient(patient));
+        var message = _serializer.SerializeToString(MapFromDomainPatient(patient));
+        _logger.LogInformation(message);
+        return message;
     }
 
     public async Task PutPatient(long id, Patient patient)
