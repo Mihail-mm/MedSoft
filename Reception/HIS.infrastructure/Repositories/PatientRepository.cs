@@ -20,7 +20,7 @@ public class PatientRepository : IPatientRepository
                            INSERT INTO patients(id, name, surname, birthday)
                            VALUES (@id, @name, @surname, @birthday)
                            """;
-        
+
         await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync();
 
         await using var command = new NpgsqlCommand(sql, connection);
@@ -30,6 +30,31 @@ public class PatientRepository : IPatientRepository
         command.Parameters.Add(new NpgsqlParameter("@birthday", patient.BirthDate));
 
         await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task<Patient> GetPatientById(long id)
+    {
+        const string sql = """
+                            SELECT * 
+                            FROM patients
+                            WHERE id = @id;
+                           """;
+
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync();
+        await using var command = new NpgsqlCommand(sql, connection);
+        await using DbDataReader reader = await command.ExecuteReaderAsync();
+
+        if (await reader.ReadAsync())
+        {
+            return new Patient(
+                Id: reader.GetInt64(0),
+                Name: reader.GetString(1),
+                Surname: reader.GetString(2),
+                BirthDate: DateOnly.FromDateTime(reader.GetDateTime(3)),
+                Status: reader.GetFieldValue<PatientStatus>(4));
+        }
+
+        throw new ApplicationException("No Patient found");
     }
 
     public async IAsyncEnumerable<Patient> GetAll()

@@ -43,6 +43,7 @@ builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<JsonSerialize
 
 builder.Services.AddHisApplication();
 builder.Services.AddInfrastructure();
+builder.Services.AddFhirServices();
 
 builder.Services
     .AddControllers()
@@ -50,7 +51,14 @@ builder.Services
     .AddPresentationHttp()
     .AddPresentationFhir();
 
-builder.Services.AddSwaggerGen().AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.CustomSchemaIds(type => 
+    {
+        return type.FullName.Replace(".", "_");
+    });
+}).AddEndpointsApiExplorer();
+
 
 builder.Configuration.AddJsonFile($"appsettings.json", true, true);
 

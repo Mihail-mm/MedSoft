@@ -18,6 +18,11 @@ public class PatientService : IPatientService
         await _patientRepository.AddPatient(patient);
     }
 
+    public async Task<Patient> GetPatientById(long id)
+    {
+        return await _patientRepository.GetPatientById(id);
+    }
+
     public IAsyncEnumerable<Patient> GetAll()
     {
         return _patientRepository.GetAll();

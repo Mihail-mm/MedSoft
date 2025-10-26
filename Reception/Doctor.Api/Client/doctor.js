@@ -47,7 +47,7 @@ async function finishAppointment(patientId) {
 
 function startAutoRefresh() {
     loadPatients();
-    refreshTimer = setInterval(loadPatients, 1000);
+    refreshTimer = setInterval(loadPatients, 3000);
 }
 
 

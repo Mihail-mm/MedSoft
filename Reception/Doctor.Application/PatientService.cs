@@ -1,8 +1,10 @@
 using Doctor.Contracts;
 using Doctor.Models;
+using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using DomainPatient = Doctor.Models.Patient;
 using Patient = Hl7.Fhir.Model.Patient;
+using Task = System.Threading.Tasks.Task;
 
 namespace Doctor.Application;
 
@@ -10,15 +12,20 @@ public class PatientService : IPatientService
 {
     private readonly FhirClient _fhirClient;
 
+    private static FhirClientSettings Settings = new()
+    {
+        PreferredFormat = ResourceFormat.Json
+    };
+
     public PatientService()
     {
-        _fhirClient = new FhirClient("https://localhost:7226/api/fhir");
+        _fhirClient = new FhirClient("https://localhost:7226/api/fhir", Settings);
     }
 
     public async Task<IEnumerable<DomainPatient>> GetPatients()
     {
         var bundle = await _fhirClient.SearchAsync<Patient>();
-        return bundle.Entry
+        var patients = bundle.Entry
             .Select(e => (Patient)e.Resource)
             .Select(p => new DomainPatient(
                 Id: long.Parse(p.Id),
@@ -28,15 +35,44 @@ public class PatientService : IPatientService
                 Status: Enum.Parse<PatientStatus>(
                     p.Extension.FirstOrDefault()?.Value.ToString() ?? "Arrived", true)
             ));
+
+        return patients.Where(patient => patient.Status is PatientStatus.Arrived or PatientStatus.Started);
     }
 
-    public Task StartAppointment(long patientId)
+    public async Task StartAppointment(long patientId)
     {
-        throw new NotImplementedException();
+        var patient = await _fhirClient.ReadAsync<Patient>($"Patient/{patientId}");
+
+        var statusExtensionUrl = "http://example.org/fhir/StructureDefinition/patient-status";
+        var existing = patient.Extension.FirstOrDefault(e => e.Url == statusExtensionUrl);
+        if (existing != null)
+        {
+            existing.Value = new FhirString(PatientStatus.Started.ToString());
+        }
+        else
+        {
+            patient.Extension.Add(new Extension(statusExtensionUrl, new FhirString(PatientStatus.Started.ToString())));
+        }
+
+        await _fhirClient.UpdateAsync(patient);
     }
 
-    public Task FinishAppointment(long patientId)
+    public async Task FinishAppointment(long patientId)
     {
-        throw new NotImplementedException();
+        var patient = await _fhirClient.ReadAsync<Patient>($"Patient/{patientId}");
+
+        var statusExtensionUrl = "http://example.org/fhir/StructureDefinition/patient-status";
+        var existing = patient.Extension.FirstOrDefault(e => e.Url == statusExtensionUrl);
+        if (existing != null)
+        {
+            existing.Value = new FhirString(PatientStatus.Completed.ToString());
+        }
+        else
+        {
+            patient.Extension.Add(new Extension(statusExtensionUrl,
+                new FhirString(PatientStatus.Completed.ToString())));
+        }
+
+        await _fhirClient.UpdateAsync(patient);
     }
 }
