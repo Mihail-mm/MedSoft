@@ -4,7 +4,7 @@ namespace Doctor.Contracts;
 
 public interface IPatientService
 {
-    Task<List<Patient>> GetPatients();
+    Task<IEnumerable<Patient>> GetPatients();
 
     Task StartAppointment(long patientId);
 

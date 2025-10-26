@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using HIS.Application.Extensions;
 using HIS.infrastructure.Extensions;
+using HIS.Presentation.Fhir.Extensions;
 using HIS.Presentation.HTTP.Extensions;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -46,7 +47,8 @@ builder.Services.AddInfrastructure();
 builder.Services
     .AddControllers()
     .AddNewtonsoftJson()
-    .AddPresentationHttp();
+    .AddPresentationHttp()
+    .AddPresentationFhir();
 
 builder.Services.AddSwaggerGen().AddEndpointsApiExplorer();
 

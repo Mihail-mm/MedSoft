@@ -16,7 +16,7 @@ public class UiController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<List<Patient>> GetPatients()
+    public async Task<IEnumerable<Patient>> GetPatients()
     {
         return await _patientService.GetPatients();
     }

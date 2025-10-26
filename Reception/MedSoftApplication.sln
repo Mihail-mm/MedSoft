@@ -60,6 +60,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doctor.Models", "Doctor.Mod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doctor.Api", "Doctor.Api\Doctor.Api.csproj", "{A586DD65-892D-4B1B-AF0C-345AC97B870E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HIS.Presentation.Fhir", "HIS.Presentation.Fhir\HIS.Presentation.Fhir.csproj", "{E7521890-2CD8-481A-AE17-0E6CC18EBFA5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,7 @@ Global
 		{70E21EE9-F99D-44E5-80E9-17ADA03A2EE6} = {441E314B-C8AE-426C-BE5B-F14CC8614667}
 		{05742E4A-9953-4F1F-91E9-98ACD17981C4} = {441E314B-C8AE-426C-BE5B-F14CC8614667}
 		{A586DD65-892D-4B1B-AF0C-345AC97B870E} = {0F86F8A6-5A3B-4A0D-8ECB-FBC15F96D4A7}
+		{E7521890-2CD8-481A-AE17-0E6CC18EBFA5} = {D076E1E0-91FC-47EE-A5D7-39EC3CB46119}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9C04D33F-2B15-4C5B-A7B1-37A3712A913F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -171,5 +174,9 @@ Global
 		{A586DD65-892D-4B1B-AF0C-345AC97B870E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A586DD65-892D-4B1B-AF0C-345AC97B870E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A586DD65-892D-4B1B-AF0C-345AC97B870E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7521890-2CD8-481A-AE17-0E6CC18EBFA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7521890-2CD8-481A-AE17-0E6CC18EBFA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7521890-2CD8-481A-AE17-0E6CC18EBFA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7521890-2CD8-481A-AE17-0E6CC18EBFA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
