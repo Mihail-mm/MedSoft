@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function getStatusText(status) {
     const statusMap = {
-        0: 'Пациент не готов к приему у врача',
+        0: 'Пациент зарегистрирован в медицинской системе',
         1: 'Пациент готов к приему у врача',
         2: 'Пациент на приеме у врача',
         3: 'Пациент уже был у врача на приеме'

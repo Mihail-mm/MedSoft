@@ -3,6 +3,7 @@ using Hl7.Fhir.Rest;
 using Reception.Application.Abstraction;
 using Reception.Application.Contracts;
 using Reception.Application.Models;
+using Reception.Application.Models.Exceptions;
 using FhirPatient = Hl7.Fhir.Model.Patient;
 using Patient = Reception.Application.Models.Patient;
 using Task = System.Threading.Tasks.Task;
@@ -66,12 +67,13 @@ public class PatientService : IPatientService
 
     public async Task PatientArrived(long id)
     {
+        await ValidatePatientBeforePatchStatus(id);
         await PatchStatus(id, PatientStatus.Arrived);
 
         var patient = await _fhirClient.ReadAsync<FhirPatient>($"Patient/{id}");
 
         var statusExtensionUrl = "http://example.org/fhir/StructureDefinition/patient-status";
-        var existing = patient.Extension.FirstOrDefault(e => e.Url == statusExtensionUrl);
+        var existing = patient?.Extension.FirstOrDefault(e => e.Url == statusExtensionUrl);
         if (existing != null)
         {
             existing.Value = new FhirString(PatientStatus.Arrived.ToString());
@@ -83,5 +85,15 @@ public class PatientService : IPatientService
         }
 
         await _fhirClient.UpdateAsync(patient);
+    }
+
+    private async Task ValidatePatientBeforePatchStatus(long id)
+    {
+        var receptionPatient = await _patientRepository.GetPatientById(id);
+
+        if (receptionPatient.Status is PatientStatus.Started)
+        {
+            throw new ConflictException("The patient is already at the doctor's");
+        }
     }
 }

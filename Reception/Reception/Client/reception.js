@@ -69,7 +69,7 @@ function displayFoundPatients(patients) {
             Дата рождения: ${new Date(patient.birthDate).toLocaleDateString()}<br>
             Статус: ${getStatusText(patient.status)}<br>
             ID: ${patient.id}
-            <button onclick="patchPatientStatus('${patient.id}')" style="background: green; margin-top: 5px;">Пациент пришел</button>
+            <button onclick="patchPatientStatus('${patient.id}')" style="background: green; margin-top: 5px;">Пациент пришел на приём</button>
             <button onclick="deletePatient('${patient.id}')" style="background: #dc3545; margin-top: 5px;">Удалить</button>
         </div>
     `).join('');
@@ -85,7 +85,7 @@ async function deletePatient(patientId) {
         await loadPatients();
         await searchPatients();
     } else {
-        showMessage('Ошибка удаления', true);
+        showMessage(response.statusText, true);
     }
 }
 
@@ -98,7 +98,7 @@ async function patchPatientStatus(patientId) {
         await loadPatients();
         await searchPatients();
     } else {
-        showMessage('Ошибка', true);
+        showMessage("Пациент отмечен как прибывший", true);
     }
 }
 
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function getStatusText(status) {
     const statusMap = {
-        0: 'Пациент не готов к приему у врача',
+        0: 'Пациент зарегистрирован в медицинской системе',
         1: 'Пациент готов к приему у врача',
         2: 'Пациент на приеме у врача',
         3: 'Пациент уже был у врача на приеме'

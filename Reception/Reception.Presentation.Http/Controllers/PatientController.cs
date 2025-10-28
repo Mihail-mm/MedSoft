@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Reception.Application.Contracts;
 using Reception.Application.Models;
+using Reception.Application.Models.Exceptions;
 
 namespace Reception.Presentation.Http.Controllers;
 
@@ -55,8 +58,16 @@ public class PatientController
     }
 
     [HttpPatch("{id:long}")]
-    public async Task PatientArrived(long id)
+    public async Task<IResult> PatientArrived(long id)
     {
-        await _patientService.PatientArrived(id);
+        try
+        {
+            await _patientService.PatientArrived(id);
+            return Results.Ok();
+        }
+        catch (ConflictException ex)
+        {
+            return Results.Conflict(ex.Message);
+        }
     }
 }

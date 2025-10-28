@@ -1,5 +1,7 @@
 using Doctor.Contracts;
 using Doctor.Models;
+using Doctor.Models.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Doctor.Presentation.Http.Controllers;
@@ -28,8 +30,16 @@ public class UiController : ControllerBase
     }
 
     [HttpPatch("{patientId:long}/finish")]
-    public async Task FinishAppointment([FromRoute] long patientId)
+    public async Task<IResult> FinishAppointment([FromRoute] long patientId)
     {
-        await _patientService.FinishAppointment(patientId);
+        try
+        {
+            await _patientService.FinishAppointment(patientId);
+            return Results.Ok();
+        }
+        catch (ConflictStatusException ex)
+        {
+            return Results.Conflict(ex.Message);
+        }
     }
 }

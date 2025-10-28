@@ -1,5 +1,6 @@
 using Doctor.Contracts;
 using Doctor.Models;
+using Doctor.Models.Exceptions;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using DomainPatient = Doctor.Models.Patient;
@@ -60,6 +61,7 @@ public class PatientService : IPatientService
     public async Task FinishAppointment(long patientId)
     {
         var patient = await _fhirClient.ReadAsync<Patient>($"Patient/{patientId}");
+        ValidateBeforePatchStatus(patient);
 
         var statusExtensionUrl = "http://example.org/fhir/StructureDefinition/patient-status";
         var existing = patient.Extension.FirstOrDefault(e => e.Url == statusExtensionUrl);
@@ -74,5 +76,25 @@ public class PatientService : IPatientService
         }
 
         await _fhirClient.UpdateAsync(patient);
+    }
+
+    private void ValidateBeforePatchStatus(Patient patient)
+    {
+        var domainPatient = mapFromHl7Patient(patient);
+        if (domainPatient.Status is not PatientStatus.Started)
+        {
+            throw new ConflictStatusException("Patient status is invalid for this patient");
+        }
+    }
+
+    private static DomainPatient mapFromHl7Patient(Patient patient)
+    {
+        return new DomainPatient(
+            Id: long.Parse(patient.Id),
+            Name: patient.Name.FirstOrDefault()?.Given.FirstOrDefault() ?? "",
+            Surname: patient.Name.FirstOrDefault()?.Family ?? "",
+            BirthDate: DateOnly.Parse(patient.BirthDate),
+            Status: Enum.Parse<PatientStatus>(
+                patient.Extension.FirstOrDefault()?.Value.ToString() ?? "Arrived", true));
     }
 }
