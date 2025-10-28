@@ -57,6 +57,7 @@ public class FhirPatientService : IFhirPatientService
     {
         var domainPatient = mapFromHl7Patient(patient);
         await _patientsService.PatchPatientStatus(id, domainPatient.Status);
+        _logger.LogInformation(patient.ToString());
         await _fhirClient.UpdateAsync(patient);
     }
     

@@ -1,5 +1,6 @@
 using Hl7.Fhir.Serialization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Reception.Application.Contracts;
 using Reception.Application.Models;
 using Patient = Hl7.Fhir.Model.Patient;
@@ -12,11 +13,13 @@ namespace Reception.Presentation.Fhir.Controllers;
 public class PatientController : ControllerBase
 {
     private readonly IPatientService _patientService;
+    private readonly ILogger<PatientController> _logger;
     private readonly FhirJsonParser _parser = new();
 
-    public PatientController(IPatientService patientService)
+    public PatientController(IPatientService patientService, ILogger<PatientController> logger)
     {
         _patientService = patientService;
+        _logger = logger;
     }
 
     [HttpPut("{id:long}")]
@@ -26,6 +29,7 @@ public class PatientController : ControllerBase
     {
         using var reader = new StreamReader(Request.Body);
         var body = await reader.ReadToEndAsync();
+        _logger.LogInformation(body);
         var patient = _parser.Parse<Patient>(body);
         var domainPatient = mapFromHl7Patient(patient);
         await _patientService.PatchStatus(id, domainPatient.Status);
