@@ -28,10 +28,10 @@ async function addPatient() {
 
     if (response.ok) {
         await loadPatients();
+        clearForm();
     } else {
         showMessage('Ошибка при добавлении пациента: ' + response.status, true);
     }
-    clearForm();
 }
 
 async function loadPatients() {
@@ -52,7 +52,9 @@ function displayPatients(patients) {
         <div class="patient-item">
             <strong>${patient.surname} ${patient.name}</strong><br>
             Дата рождения: ${new Date(patient.birthDate).toLocaleDateString()}<br>
-            ID: ${patient.id}
+            Статус: ${getStatusText(patient.status)}<br>
+            ID: ${patient.id}<br>
+            <button onclick="patchPatientStatus('${patient.id}')" style="background: green; margin-top: 5px;">Изменить статус</button>
             <button onclick="deletePatient('${patient.id}')" style="background: #dc3545; margin-top: 5px;">Удалить</button>
         </div>
     `).join('');
@@ -65,7 +67,9 @@ function displayFoundPatients(patients) {
         <div class="patient-item">
             <strong>${patient.surname} ${patient.name}</strong><br>
             Дата рождения: ${new Date(patient.birthDate).toLocaleDateString()}<br>
+            Статус: ${getStatusText(patient.status)}<br>
             ID: ${patient.id}
+            <button onclick="patchPatientStatus('${patient.id}')" style="background: green; margin-top: 5px;">Пациент пришел на приём</button>
             <button onclick="deletePatient('${patient.id}')" style="background: #dc3545; margin-top: 5px;">Удалить</button>
         </div>
     `).join('');
@@ -76,11 +80,25 @@ async function deletePatient(patientId) {
         method: 'DELETE'
     });
 
+    await clearPatients();
     if (response.ok) {
         await loadPatients();
         await searchPatients();
     } else {
-        showMessage('Ошибка удаления', true);
+        showMessage(response.statusText, true);
+    }
+}
+
+async function patchPatientStatus(patientId) {
+    const response = await fetch(`${API_BASE}/patients/${patientId}`, {
+        method: 'PATCH',
+    });
+    await clearPatients();
+    if (response.ok) {
+        await loadPatients();
+        await searchPatients();
+    } else {
+        showMessage("Пациент отмечен как прибывший", true);
     }
 }
 
@@ -109,3 +127,18 @@ function clearForm() {
 document.addEventListener('DOMContentLoaded', function () {
     loadPatients();
 });
+
+function getStatusText(status) {
+    const statusMap = {
+        0: 'Пациент зарегистрирован в медицинской системе',
+        1: 'Пациент готов к приему у врача',
+        2: 'Пациент на приеме у врача',
+        3: 'Пациент уже был у врача на приеме'
+    };
+    return statusMap[status] || `Статус: ${status}`;
+}
+
+function clearPatients() {
+    const container = document.getElementById('found-patient');
+    container.innerHTML = '';
+}

@@ -25,6 +25,7 @@ function displayPatients(patients) {
         <div class="patient-item">
             <strong>${patient.surname} ${patient.name}</strong><br>
             Дата рождения: ${new Date(patient.birthDate).toLocaleDateString()}<br>
+            Статус: ${getStatusText(patient.status)}<br>
             ID: ${patient.id}
         </div>
     `).join('');
@@ -37,3 +38,13 @@ function startAutoRefresh() {
 document.addEventListener('DOMContentLoaded', function () {
     startAutoRefresh();
 });
+
+function getStatusText(status) {
+    const statusMap = {
+        0: 'Пациент зарегистрирован в медицинской системе',
+        1: 'Пациент готов к приему у врача',
+        2: 'Пациент на приеме у врача',
+        3: 'Пациент уже был у врача на приеме'
+    };
+    return statusMap[status] || `Статус: ${status}`;
+}

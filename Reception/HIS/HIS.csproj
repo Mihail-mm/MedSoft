@@ -16,6 +16,7 @@
     <ItemGroup>
         <ProjectReference Include="..\HIS.Application\HIS.Application.csproj" />
         <ProjectReference Include="..\HIS.Infrastructure\HIS.Infrastructure.csproj" />
+        <ProjectReference Include="..\HIS.Presentation.Fhir\HIS.Presentation.Fhir.csproj" />
         <ProjectReference Include="..\HIS.Presentation.HTTP\HIS.Presentation.HTTP.csproj" />
         
     </ItemGroup>

@@ -16,6 +16,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Reception.Application\Reception.Application.csproj" />
       <ProjectReference Include="..\Reception.Infrastructure\Reception.Infrastructure.csproj" />
+      <ProjectReference Include="..\Reception.Presentation.Fhir\Reception.Presentation.Fhir.csproj" />
       <ProjectReference Include="..\Reception.Presentation.Http\Reception.Presentation.Http.csproj" />
     </ItemGroup>
 

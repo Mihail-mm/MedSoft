@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using HIS.Application.Extensions;
 using HIS.infrastructure.Extensions;
+using HIS.Presentation.Fhir.Extensions;
 using HIS.Presentation.HTTP.Extensions;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -42,13 +43,22 @@ builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<JsonSerialize
 
 builder.Services.AddHisApplication();
 builder.Services.AddInfrastructure();
+builder.Services.AddFhirServices();
 
 builder.Services
     .AddControllers()
     .AddNewtonsoftJson()
-    .AddPresentationHttp();
+    .AddPresentationHttp()
+    .AddPresentationFhir();
 
-builder.Services.AddSwaggerGen().AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.CustomSchemaIds(type => 
+    {
+        return type.FullName.Replace(".", "_");
+    });
+}).AddEndpointsApiExplorer();
+
 
 builder.Configuration.AddJsonFile($"appsettings.json", true, true);
 

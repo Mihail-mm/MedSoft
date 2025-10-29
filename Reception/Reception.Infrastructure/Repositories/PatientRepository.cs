@@ -54,7 +54,8 @@ public class PatientRepository : IPatientRepository
                 Id: reader.GetInt64(0),
                 Name: reader.GetString(1),
                 Surname: reader.GetString(2),
-                BirthDate: DateOnly.FromDateTime(reader.GetDateTime(3)));
+                BirthDate: DateOnly.FromDateTime(reader.GetDateTime(3)),
+                Status: reader.GetFieldValue<PatientStatus>(4));
         }
     }
 
@@ -73,7 +74,8 @@ public class PatientRepository : IPatientRepository
                 Id: reader.GetInt64(0),
                 Name: reader.GetString(1),
                 Surname: reader.GetString(2),
-                BirthDate: DateOnly.FromDateTime(reader.GetDateTime(3)));
+                BirthDate: DateOnly.FromDateTime(reader.GetDateTime(3)),
+                Status: reader.GetFieldValue<PatientStatus>(4));
         }
 
         throw new Exception($"Patient with id {id} not found");
@@ -99,7 +101,8 @@ public class PatientRepository : IPatientRepository
                 Id: reader.GetInt64(0),
                 Name: reader.GetString(1),
                 Surname: reader.GetString(2),
-                BirthDate: DateOnly.FromDateTime(reader.GetDateTime(3)));
+                BirthDate: DateOnly.FromDateTime(reader.GetDateTime(3)),
+                Status: reader.GetFieldValue<PatientStatus>(4));
         }
     }
 
@@ -110,6 +113,26 @@ public class PatientRepository : IPatientRepository
         await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync();
         await using var command = new NpgsqlCommand(sql, connection);
         command.Parameters.Add(new NpgsqlParameter("@id", id));
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task PatchPatientStatus(long id, PatientStatus status)
+    {
+        const string sql = """
+                           UPDATE Patient
+                           SET patient_status = @status
+                           WHERE id = @id;
+                           """;
+
+        await using NpgsqlConnection connection = await _dataSource.OpenConnectionAsync();
+        await using var command = new NpgsqlCommand(sql, connection);
+        command.Parameters.Add(new NpgsqlParameter("@id", id));
+        var statusParam = new NpgsqlParameter("@status", status)
+        {
+            DataTypeName = "patient_status"
+        };
+        command.Parameters.Add(statusParam);
 
         await command.ExecuteNonQueryAsync();
     }

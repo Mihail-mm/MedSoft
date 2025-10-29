@@ -18,6 +18,11 @@ public class PatientService : IPatientService
         await _patientRepository.AddPatient(patient);
     }
 
+    public async Task<Patient> GetPatientById(long id)
+    {
+        return await _patientRepository.GetPatientById(id);
+    }
+
     public IAsyncEnumerable<Patient> GetAll()
     {
         return _patientRepository.GetAll();
@@ -26,5 +31,10 @@ public class PatientService : IPatientService
     public async Task DeletePatient(long patientId)
     {
         await _patientRepository.DeletePatient(patientId);
+    }
+
+    public async Task PatchPatientStatus(long patientId, PatientStatus status)
+    {
+        await _patientRepository.PatchPatientStatus(patientId, status);
     }
 }

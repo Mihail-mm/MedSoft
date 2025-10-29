@@ -9,8 +9,12 @@ public interface IPatientService
     IAsyncEnumerable<Patient> GetAllPatients();
 
     Task<Patient> GetPatientById(long id);
-    
+
     IAsyncEnumerable<Patient> GetPatientBySearchRequest(SearchPatientRequest request);
 
     Task DeletePatientById(long id);
+
+    Task PatchStatus(long id, PatientStatus status);
+    
+    Task PatientArrived(long id);
 }
